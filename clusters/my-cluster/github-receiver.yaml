@@ -11,6 +11,6 @@ spec:
   secretRef:
     name: receiver-token
   resources:
-    kind: GitRepository
-    name: state-repo
+    - kind: GitRepository
+      name: state-repo
 
