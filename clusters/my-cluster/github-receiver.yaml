@@ -1,9 +1,8 @@
----
 apiVersion: notification.toolkit.fluxcd.io/v1
 kind: Receiver
 metadata:
   name: github-receiver
-  namespace: flux-system
+  namespace: catalin-flux-system
 spec:
   type: github
   events:
@@ -12,7 +11,6 @@ spec:
   secretRef:
     name: receiver-token
   resources:
-    - apiVersion: source.toolkit.fluxcd.io/v1
-      kind: GitRepository
-      name: flux-system
+    kind: GitRepository
+    name: state-repo
 

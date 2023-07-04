@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: state-repo
-  namespace: flux-system
+  namespace: catalin-flux-system
 spec:
   interval: 1m0s
   url: https://github.com/CatalinStratulat/webhook-desired-repo
@@ -19,6 +19,6 @@ data:
   username: Q2F0YWxpblN0cmF0dWxhdA==
 kind: Secret
 metadata:
-  namespace: flux-system
+  namespace: catalin-flux-system
   name: flux-gitrepo-secret
 type: Opaque
