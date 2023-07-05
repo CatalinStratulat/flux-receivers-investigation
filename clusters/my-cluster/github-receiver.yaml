@@ -11,6 +11,7 @@ spec:
   secretRef:
     name: receiver-token
   resources:
-    - kind: GitRepository
-      name: state-repo
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: GitRepository
+      name: catalin-flux-system
 
