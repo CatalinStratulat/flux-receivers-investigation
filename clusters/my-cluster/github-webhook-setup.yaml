@@ -1,0 +1,101 @@
+# Github Receiver
+
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: github-receiver
+  namespace: catalin-flux-system
+spec:
+  type: github
+  events:
+    - "ping"
+    - "push"
+  secretRef:
+    name: receiver-token
+  resources:
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: GitRepository
+      name: state-repo
+
+---
+
+# Receiver Secret
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: receiver-token
+  namespace: catalin-flux-system
+type: Opaque
+data:
+  token: YzAxZTE5M2RhZWRhMjZiNmQ4MWQ1OWU2YzhiZjk4YWI4N2QxNjdjNg==
+
+---
+
+# Git Repo (Desired State)
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: state-repo
+  namespace: catalin-flux-system
+spec:
+  interval: 1m0s
+  url: https://github.com/CatalinStratulat/webhook-desired-repo
+  ref:
+    branch: main
+  secretRef:
+    name: flux-gitrepo-secret
+
+---
+
+# Git Repo Secret
+
+apiVersion: v1
+data:
+  password: Z2hwX21LTkxCTzhMM2xCdjNEb0Q5SXBCOEtENVRKMkJhSDJlQWF5bg==
+  username: Q2F0YWxpblN0cmF0dWxhdA==
+kind: Secret
+metadata:
+  namespace: catalin-flux-system
+  name: flux-gitrepo-secret
+type: Opaque
+
+---
+
+# Loadbalancer to expose webhook receiver externally to link with github
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver-loadbalancer
+  namespace: flux-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: notification-controller
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 9292
+
+---
+
+# Kustomization
+
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-kz
+  namespace: catalin-flux-system
+spec:
+  force: true
+  interval: 3m0s
+  path: ./kustomize
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: state-repo
+  targetNamespace: catalin-flux-system
+
+
